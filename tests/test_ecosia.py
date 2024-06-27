@@ -2,18 +2,16 @@ from selenium import webdriver
 from selenium.common import WebDriverException
 from selenium.webdriver import Keys
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from webdriverproject.conditions import type_to_element, click_on_element, number_of_elements
+from webdriverproject.conditions import type, click, number_of_elements, assert_that, browser_open
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-# selene: browser.open()
-driver.get('https://ecosia.org')
-wait = WebDriverWait(driver, timeout=2, ignored_exceptions=(WebDriverException,))  # явное ожидание
-driver.implicitly_wait(2)  # неявное ожидание // по большей части бесполезные, нужны только в очень узких ситуациях
+
+browser_open('https://ecosia.org')
+# wait = WebDriverWait(driver, timeout=2, ignored_exceptions=(WebDriverException,))  # явное ожидание
 
 '''
 In Selene:
@@ -41,20 +39,27 @@ wait.until(element('[name=q]')).send_keys('selene yashaka', Keys.ENTER)
 wait.until(element('[data-test-id=mainline-result-web]:nth-of-type(1) a')).click()
 '''
 
+query = '[name=q]'
+
+# query = type_to_element('[name=q]')
+# query.type('selene yashaka pulls' + Keys.ENTER))
+# type_to_element('[name=q]').type('selene yashaka pulls' + Keys.ENTER))
+
 # type_to_element('[name=q]', value='selene yashaka pulls' + Keys.ENTER)
-wait.until(type_to_element('[name=q]', value='selene yashaka pulls' + Keys.ENTER))
+type(query, value='selene yashaka pulls' + Keys.ENTER)
 
 # click_on_element('[data-test-id=mainline-result-web]:nth-of-type(1) a')
-wait.until(click_on_element('[data-test-id=mainline-result-web]:nth-of-type(1) a'))
+click('[data-test-id=mainline-result-web]:nth-of-type(1) a')
 
-wait.until(click_on_element('#pull-requests-tab'))
-
-
+click('#pull-requests-tab')
 
 # assert_that(number_of_elements('[id^=issue_]:not([id$=_link])', value=8)
-wait.until(number_of_elements('[id^=issue_]:not([id$=_link])', value=8))
+assert_that(number_of_elements('[id^=issue_]:not([id$=_link])', value=8))
+
 '''
 Basic Webrdiver (unstable): 
 number_of_pulls = len(driver.find_elements(By.CSS_SELECTOR, '[id^=issue_]:not([id$=_link])'))
 assert number_of_pulls == 8
 '''
+
+
