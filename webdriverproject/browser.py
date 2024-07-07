@@ -42,6 +42,9 @@ class Browser:
     def assert_that(self, elements):
         self.wait.until(elements)
 
+    def quit(self):
+        self.driver.quit()
+
 
 def to_locator(selector: str) -> Tuple[str, str]:
     return (By.XPATH, selector) if (

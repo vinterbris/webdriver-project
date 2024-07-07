@@ -13,3 +13,5 @@ browser.click('[data-test-id=mainline-result-web]:nth-of-type(1) a')
 
 # THEN
 browser.assert_that(number_of_elements('[id^=issue_]:not([id$=_link])', value=8))
+
+browser.quit()
