@@ -5,7 +5,6 @@ from webdriverproject.browser import Browser, number_of_elements
 browser = Browser()
 
 browser.open('https://ecosia.org')
-
 query = '[name=q]'
 
 # WHEN
