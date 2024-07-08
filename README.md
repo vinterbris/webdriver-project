@@ -12,3 +12,5 @@
     * `click`
     * `assert_that`
     * `quit`
+
+При ошибке в wait добавлены корректные error messgages.

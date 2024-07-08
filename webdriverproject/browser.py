@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import _element_if_visible
-from selenium.webdriver.support.wait import WebDriverWait
+from webdriverproject.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
