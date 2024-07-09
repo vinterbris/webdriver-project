@@ -19,10 +19,10 @@ class Browser:
         self.driver.get(url)
 
     def element(self, selector):
-        def find_visible_element(driver):
+        def command(driver):
             return _element_if_visible(driver.find_element(*to_locator(selector)))
 
-        return find_visible_element
+        return self.wait.until(command)
 
     def type(self, selector, value):
         def command(driver: WebDriver):
@@ -30,17 +30,23 @@ class Browser:
             webelement.send_keys(value)
             return webelement
 
-        self.wait.until(command)
+        return self.wait.until(command)
 
     def click(self, selector):
         def find_element_and_click(driver: WebDriver):
             driver.find_element(*to_locator(selector)).click()
             return True
 
-        self.wait.until(find_element_and_click)
+        return self.wait.until(find_element_and_click)
 
-    def assert_that(self, elements):
-        self.wait.until(elements)
+    def assert_number_of_elements(self, selector, value: int):
+        def assertion(driver: WebDriver):
+            webelements = driver.find_elements(*to_locator(selector))
+            actual_value = len(webelements)
+            if actual_value != value:
+                raise AssertionError(f'Number of elements is not {value}\nActual value = {actual_value}')
+
+        return self.wait.until(assertion)
 
     def quit(self):
         self.driver.quit()
@@ -56,9 +62,4 @@ def to_locator(selector: str) -> Tuple[str, str]:
     ) else (By.CSS_SELECTOR, selector)
 
 
-def number_of_elements(selector, value: int):
-    def predicate(driver: WebDriver):
-        webelements = driver.find_elements(*to_locator(selector))
-        return len(webelements) == value
 
-    return predicate
