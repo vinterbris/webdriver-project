@@ -1,11 +1,10 @@
-from typing import Tuple
-
 from selenium import webdriver
 from selenium.common import WebDriverException
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import _element_if_visible
+
+from webdriverproject.selector import to_locator
 from webdriverproject.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -39,27 +38,20 @@ class Browser:
 
         return self.wait.until(find_element_and_click)
 
-    def assert_number_of_elements(self, selector, value: int):
-        def assertion(driver: WebDriver):
-            webelements = driver.find_elements(*to_locator(selector))
-            actual_value = len(webelements)
-            if actual_value != value:
-                raise AssertionError(f'Number of elements is not {value}\nActual value = {actual_value}')
+    # def assert_number_of_elements(self, selector, value: int):
+    #     def assertion(driver: WebDriver):
+    #         webelements = driver.find_elements(*to_locator(selector))
+    #         actual_value = len(webelements)
+    #         if actual_value != value:
+    #             raise AssertionError(f'Number of elements is not {value}\nActual value = {actual_value}')
+    #
+    #     return self.wait.until(assertion)
 
-        return self.wait.until(assertion)
+    def assert_that(self, condition):
+        return self.wait.until(condition)
 
     def quit(self):
         self.driver.quit()
-
-
-def to_locator(selector: str) -> Tuple[str, str]:
-    return (By.XPATH, selector) if (
-            selector.startswith('/')
-            or selector.startswith('//')
-            or selector.startswith('./')
-            or selector.startswith('..')
-            or selector.startswith('(')
-    ) else (By.CSS_SELECTOR, selector)
 
 
 
