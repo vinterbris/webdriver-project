@@ -1,6 +1,6 @@
 from selenium.webdriver import Keys
 
-from tests.pages import github, ecosia, web
+from tests.pages import web
 from tests.pages.web import browser
 
 
