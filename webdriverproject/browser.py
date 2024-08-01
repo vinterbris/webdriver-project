@@ -23,9 +23,11 @@ class Element:
 
     def type(self, value):
         self.browser.type(self.selector, value)
+        return self
 
     def click(self):
         self.browser.click(self.selector)
+        return self
 
 
 class Collection:
