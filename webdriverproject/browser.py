@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from selenium.common import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from webdriverproject.conditions import have
 from webdriverproject.selector import to_locator
 from webdriverproject.wait import WebDriverWait
 
@@ -11,6 +14,27 @@ from webdriverproject.wait import WebDriverWait
 class Config:
     timeout: float = 2
     base_url: str = ''
+
+
+class Element:
+    def __init__(self, selector, browser: Browser):
+        self.selector = selector
+        self.browser = browser
+
+    def type(self, value):
+        self.browser.type(self.selector, value)
+
+    def click(self):
+        self.browser.click(self.selector)
+
+
+class Collection:
+    def __init__(self, selector, browser: Browser):
+        self.selector = selector
+        self.browser = browser
+
+    def should_have_size(self, value):
+        self.browser.should(have.number_of_elements(self.selector, value=value))
 
 
 class Browser:
@@ -43,14 +67,8 @@ class Browser:
     def quit(self):
         self.driver.quit()
 
-    def element(self, selector):
+    def element(self, selector) -> Element:
         return Element(selector, self)
 
-
-class Element:
-    def __init__(self, selector, browser: Browser):
-        self.selector = selector
-        self.browser = browser
-
-    def type(self, value):
-        self.browser.type(self.selector, value)
+    def all(self, selector) -> Collection:
+        return Collection(selector, self)

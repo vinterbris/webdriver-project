@@ -17,9 +17,10 @@ def test_number_of_pull_requests():
 
     # WHEN
     browser.element('[name=q]').type('selene yashaka pulls' + Keys.ENTER)
-    browser.click('[data-test-id=mainline-result-web]:nth-of-type(1) a')
+    browser.element('[data-test-id=mainline-result-web]:nth-of-type(1) a').click()
 
     # THEN
-    browser.should(have.number_of_elements('[id^=issue_]:not([id$=_link])', value=9))
+    # browser.should(have.number_of_elements('[id^=issue_]:not([id$=_link])', value=9))
+    browser.all('[id^=issue_]:not([id$=_link])').should_have_size(9)
 
     browser.quit()
