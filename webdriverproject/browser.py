@@ -1,25 +1,33 @@
-from selenium import webdriver
+from dataclasses import dataclass
+
 from selenium.common import WebDriverException
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.expected_conditions import _element_if_visible
 
 from webdriverproject.selector import to_locator
 from webdriverproject.wait import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
+
+
+@dataclass
+class Config:
+    timeout: float = 2
+    base_url:str = ''
 
 
 class Browser:
-    def __init__(self):
-        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-        self.wait = WebDriverWait(self.driver, timeout=2, ignored_exceptions=(WebDriverException,))
+    def __init__(self, driver: WebDriver, config=Config()):
+        self.driver = driver
+        self.config = config
+        self.wait = WebDriverWait(self.driver, timeout=config.timeout, ignored_exceptions=(WebDriverException,))
 
-    def open(self, url):
-        self.driver.get(url)
+    def open(self, relative_url):
+        self.driver.get(self.config.base_url + relative_url)
 
-    def element(self, selector):
-        def command(driver):
-            return _element_if_visible(driver.find_element(*to_locator(selector)))
+    def _element(self, selector):
+        def command(driver: WebDriver):
+            webelement = driver.find_element(*to_locator(selector))
+            if not webelement.is_displayed():
+                raise AssertionError(f'element is not displayed: {webelement.get_attribute('outerHTML')}')
+            return webelement
 
         return self.wait.until(command)
 
@@ -29,29 +37,17 @@ class Browser:
             webelement.send_keys(value)
             return webelement
 
-        return self.wait.until(command)
+        return self.wait.until(command, message=f'failed to type "{value}" into element by {selector}')
 
     def click(self, selector):
         def find_element_and_click(driver: WebDriver):
             driver.find_element(*to_locator(selector)).click()
             return True
 
-        return self.wait.until(find_element_and_click)
+        return self.wait.until(find_element_and_click, message=f'failed to click on element {selector}')
 
-    # def assert_number_of_elements(self, selector, value: int):
-    #     def assertion(driver: WebDriver):
-    #         webelements = driver.find_elements(*to_locator(selector))
-    #         actual_value = len(webelements)
-    #         if actual_value != value:
-    #             raise AssertionError(f'Number of elements is not {value}\nActual value = {actual_value}')
-    #
-    #     return self.wait.until(assertion)
-
-    def assert_that(self, condition):
+    def should(self, condition):
         return self.wait.until(condition)
 
     def quit(self):
         self.driver.quit()
-
-
-

@@ -13,4 +13,4 @@
     * `assert_that`
     * `quit`
 
-При ошибке в wait добавлены корректные error messgages.
+При ошибке в wait добавлены корректные error messagages.
