@@ -10,7 +10,7 @@ from webdriverproject.wait import WebDriverWait
 @dataclass
 class Config:
     timeout: float = 2
-    base_url:str = ''
+    base_url: str = ''
 
 
 class Browser:
@@ -21,15 +21,6 @@ class Browser:
 
     def open(self, relative_url):
         self.driver.get(self.config.base_url + relative_url)
-
-    def _element(self, selector):
-        def command(driver: WebDriver):
-            webelement = driver.find_element(*to_locator(selector))
-            if not webelement.is_displayed():
-                raise AssertionError(f'element is not displayed: {webelement.get_attribute('outerHTML')}')
-            return webelement
-
-        return self.wait.until(command)
 
     def type(self, selector, value):
         def command(driver: WebDriver):
@@ -51,3 +42,15 @@ class Browser:
 
     def quit(self):
         self.driver.quit()
+
+    def element(self, selector):
+        return Element(selector, self)
+
+
+class Element:
+    def __init__(self, selector, browser: Browser):
+        self.selector = selector
+        self.browser = browser
+
+    def type(self, value):
+        self.browser.type(self.selector, value)

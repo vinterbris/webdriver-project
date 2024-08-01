@@ -14,10 +14,9 @@ browser = Browser(
 
 def test_number_of_pull_requests():
     browser.open('/')
-    query = '[name=q]'
 
     # WHEN
-    browser.type(query, value='selene yashaka pulls' + Keys.ENTER)
+    browser.element('[name=q]').type('selene yashaka pulls' + Keys.ENTER)
     browser.click('[data-test-id=mainline-result-web]:nth-of-type(1) a')
 
     # THEN
